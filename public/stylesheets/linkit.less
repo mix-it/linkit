@@ -1,3 +1,7 @@
+
+@mixitDarkGrey : #7F7F7F;
+@mixitLightGrey : #F8F8F8;
+
 body {
   padding-top: 70px;
 }
@@ -12,4 +16,18 @@ body {
 hr.featurette-divider {
   margin-top: 3em;
   margin-bottom: 3em;
+}
+
+.navbar-default {
+  .navbar-nav  {
+    > li > a {
+      color : @mixitLightGrey;
+    }
+
+    > .open > a, > .open > a:focus {
+      background-color: @mixitDarkGrey;
+    }
+  }
+
+  background-color: @mixitDarkGrey;
 }
