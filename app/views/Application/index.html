@@ -4,9 +4,67 @@
 <script src="@{'/public/javascripts/tab.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 <script src="@{'/public/javascripts/popover.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 <script>
+    var colors = [
+      //lighter
+    "#cceefb",  "#b2e6f9",   "#99def8",        "#7fd6f6",     "#66cdf4", "#4cc5f3"    ,"#32bdf1",        "#19b5ef",
+    //the original
+    "#00adee",
+    //darker
+    "#009bd6", "#008abe", "#0079a6", "#00678e", "#005677", "#00455f", "#003347", "#00222f", "#7F7F7F"
+    ];
+
+    var toHexColor = function(rgbStr) {
+        var parts = rgbStr.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        // parts now should be ["rgb(0, 70, 255", "0", "70", "255"]
+
+        delete (parts[0]);
+        for (var i = 1; i <= 3; ++i) {
+            parts[i] = parseInt(parts[i]).toString(16);
+            if (parts[i].length == 1) parts[i] = '0' + parts[i];
+        }
+        var hexString ='#'+parts.join('').toUpperCase(); // "#0070FF"
+        return hexString;
+    }
+
     $(function() {
         $("a[rel=popover]").popover({
         })
+
+        $(".row").on('click', function() {
+           var colorid = $(this).data("colorid");
+            if ( colorid === 'undefined') {
+                colorid = 0;
+            }   else {
+                colorid++;
+                if ( colorid > colors.length) { colorid = 0; }
+            }
+
+            console.log("setting colorid:" + colorid);
+            $(this).data("colorid", colorid);
+            var chosenColor = colors[colorid];
+
+            $(this).css('background-color', chosenColor);
+
+        });
+
+        $("#colorExporter").on('click', function () {
+            var text = "";
+            $(".row").each(function () {
+                var colorid = $(this).data("colorid");
+                var chosenColor = colors[colorid];
+                text += "["+chosenColor+"],";
+            });
+
+            $("#mycolors").text(text);
+        });
+
+        $(".row").each(function () {
+            var colorid = $(this).data("colorid");
+            var chosenColor = colors[colorid];
+            $(this).css('background-color', chosenColor);
+        });
+
+
     })
 </script>
 #{/set}
@@ -43,6 +101,8 @@
 </style>
 #{/set}
 <div>
+    <button id="colorExporter">export my colors</button>
+    <span id="mycolors"></span>
 *{<div class="row">
         <div class="col-md-6">
             <h1>&{'event.'+models.ConferenceEvent.CURRENT+'.date'}</h1>
@@ -119,7 +179,7 @@
         </div>
     </div>          }*
      <div></div>
-    <div class="row speakers">
+    <div class="row speakers" data-colorid="11">
         <div class="container">
             <h4>Précédemment, à Mix-it</h4>
 
@@ -159,7 +219,7 @@
     <!-- START THE FEATURETTES -->
 
 
-    <div class="row featurette featurette1">
+    <div class="row featurette featurette1" data-colorid="4">
         <div class="container">
             <div class="col-md-7">
                 <h2 class="featurette-heading">Développement, Agilité, Innovation, DevOps, Lean Startup. <span
@@ -179,7 +239,7 @@
     </div>
 
 
-    <div class="row featurette featurette2">
+    <div class="row featurette featurette2" data-colorid="8">
         <div class="container">
             <div class="col-md-5">
                 <img class="featurette-image img-responsive img-thumbnail img-rotate-left"
@@ -201,7 +261,7 @@
     </div>
 
 
-    <div class="row featurette featurette3">
+    <div class="row featurette featurette3" data-colorid="0">
         <div class="container">
             <div class="col-md-7">
                 <h2 class="featurette-heading">500 participants. <span class="text-muted">50 speakers.</span></h2>
