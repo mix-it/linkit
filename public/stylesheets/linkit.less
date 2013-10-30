@@ -1,3 +1,9 @@
+
+@mixitDarkGrey : #7F7F7F;
+@mixitLightGrey : #F8F8F8;
+@mixitBlue : #00ADEE;
+@mixitDarkBlue : #005676;
+
 body {
   padding-top: 70px;
 }
@@ -12,4 +18,54 @@ body {
 hr.featurette-divider {
   margin-top: 3em;
   margin-bottom: 3em;
+}
+
+.navbar-default {
+  .navbar-nav  {
+    > li > a {
+      color : @mixitLightGrey;
+    }
+
+    > .open > a, > .open > a:focus {
+      background-color: @mixitDarkGrey;
+    }
+  }
+
+  background-color: @mixitDarkGrey;
+}
+
+.home-row {
+  padding-bottom: 2.5em;
+  padding-top: 2.5em;
+}
+
+.row.headers {
+  .home-row;
+}
+
+.row.speakers {
+  .home-row;
+  //color : @mixitLightGrey;
+  //background-color: @mixitDarkBlue;
+
+}
+.row.featurette1 {
+  .home-row;
+   // background-color: @mixitLightGrey;
+}
+
+.row.featurette2 {
+  .home-row;
+ // background-color: @mixitDarkGrey;
+}
+
+.row.featurette3 {
+  .home-row;
+  //background-color: @mixitBlue;
+}
+
+.container.home-page {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
 }
