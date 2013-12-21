@@ -27,10 +27,7 @@
     <script src="#{if offline}@{'/public/javascripts/bootstrap.js'}#{/if}#{else}${bootstrapJsUrl}#{/else}"></script>
     <script>
         $(function() {
-            $("a[rel=twipsy]").tooltip({
-                live: true,
-                placement: 'below'
-            })
+            $('[data-toggle="tooltip"]').tooltip();
         })
     </script>
 #{get 'moreScripts' /}
