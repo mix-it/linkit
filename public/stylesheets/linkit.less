@@ -101,9 +101,7 @@ h3 {
 #sessionDetails {
   .background-highlight {
     background-color: @mixitLightGrey;
-    box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     padding : 0px 40px 0px 40px;
     margin-bottom: 20px;
 
@@ -147,6 +145,12 @@ h3 {
     pointer-events: inherit !important;
     cursor: pointer !important;
   }
+}
+
+.session.track {
+  border-left-width: 7px !important;
+  padding-left: 50px !important;
+  background-color: transparent !important;
 }
 
 .track.Agility {
@@ -213,4 +217,17 @@ h3 {
 .article.content {
   font-size: 16px;
   text-align: justify;
+}
+
+.member-card {
+  padding: 10px;
+  p {
+    font-size: 14px;
+  }
+
+  h2 {
+    margin-top: 5px;
+    margin-bottom: 7px;
+    padding-left: 0px;
+  }
 }
