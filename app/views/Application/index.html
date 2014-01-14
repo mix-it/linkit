@@ -91,6 +91,12 @@
         </div>
     </div>
 
+    #{if play.configuration.getProperty('cfp.isOpen') }
+        <div class="soon"><a href="@{Sessions.create(session.username)}">&{'menu.agenda.submit.short'}</a></div>
+    #{/if}
+
+
+
 *{ <div class="soon">&{'ticketing.alert'}</div>
 
      <div class="row">

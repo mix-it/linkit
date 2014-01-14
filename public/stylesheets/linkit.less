@@ -11,6 +11,9 @@
   padding-top: 2.5em;
 }
 
+.soon {
+  color: green;
+}
 
 #previously {
   width: 100%;
@@ -223,5 +226,33 @@ h3 {
   .h2-margins {
     margin-top: 20px;
     margin-bottom: 10px;
+  }
+}
+
+.soon {/** text **/
+  position:relative;
+  /**adjust as needed**/
+  top: -300px;
+  left: 180px;
+
+  border: 5px solid red;
+  //margin-left: 120px;
+  padding: 16px;
+  width: 200px;
+
+  font-size: 24px;
+  font-weight: 600;
+  color: red;
+  letter-spacing: 0.1em;
+  line-height: 75%;
+  text-align:center;
+
+  /**note: CSS3 TRANSFORM: ROTATE DOESN'T WORK IN ALL BROWSERS YET**/
+  -webkit-transform: rotate(-20deg); /**safari, chrome**/
+  -moz-transform: rotate(-20deg); /**firefox**/
+  transform: rotate(-20deg); /**other browsers**/
+
+  a, a:visited {
+    color:red;
   }
 }
