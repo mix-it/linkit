@@ -229,30 +229,37 @@ h3 {
   }
 }
 
-.soon {/** text **/
-  position:relative;
-  /**adjust as needed**/
-  top: -300px;
-  left: 180px;
+@media (min-width: 767px) {
+  .breaking {
+    position:absolute;
+    /**adjust as needed**/
+    top: 18%;
+    left: 14%;
 
-  border: 5px solid red;
-  //margin-left: 120px;
-  padding: 16px;
-  width: 200px;
+    border: 0.2em solid red;
+    padding: 0.5em;
+    width: 10em;
 
-  font-size: 24px;
-  font-weight: 600;
-  color: red;
-  letter-spacing: 0.1em;
-  line-height: 75%;
-  text-align:center;
+    font-size: 200%;
+    font-weight: 600;
+    color: red;
+    letter-spacing: 0.1em;
+    line-height: 75%;
+    text-align:center;
 
-  /**note: CSS3 TRANSFORM: ROTATE DOESN'T WORK IN ALL BROWSERS YET**/
-  -webkit-transform: rotate(-20deg); /**safari, chrome**/
-  -moz-transform: rotate(-20deg); /**firefox**/
-  transform: rotate(-20deg); /**other browsers**/
+    /**note: CSS3 TRANSFORM: ROTATE DOESN'T WORK IN ALL BROWSERS YET**/
+    -webkit-transform: rotate(-20deg); /**safari, chrome**/
+    -moz-transform: rotate(-20deg); /**firefox**/
+    transform: rotate(-20deg); /**other browsers**/
 
-  a, a:visited {
-    color:red;
+    a, a:visited {
+      color:red;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .breaking {
+    display: none;
   }
 }
