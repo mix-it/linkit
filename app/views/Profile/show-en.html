@@ -1,0 +1,266 @@
+#{extends 'main.html' /}
+#{set title:member.toString() /}
+#{set 'canonical'}@@{Profile.show(member.login)}#{/set}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/popover.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script>
+    $(function() {
+        $("a[rel=popover]").popover({
+            offset: 5, placement: 'below'
+        })
+    });
+    var linkAction = #{jsAction @Profile.link(':memberId') /};
+    var unlinkAction = #{jsAction @Profile.unlink(':memberId') /};
+    var link = function() {
+        $.get(linkAction({memberId: ${member.id}}), function(data) {
+            addLinker(data);
+        });
+    };
+    var unlink = function() {
+        $.get(unlinkAction({memberId: ${member.id}}), function(data) {
+            removeLinker();
+        });
+    };
+    var addLinker = function(data) {
+        $('#link').hide();
+        $('#unlink').show();
+        var linkers = $('#linkers').text();
+        var count = linkers.split(' ')[0]++ + 1;
+        $('#linkers').html(count + " linkers");
+        $('#portraits').append(data);
+    };
+    var removeLinker = function() {
+        $('#unlink').hide();
+        $('#link').show();
+        var linkers = $('#linkers').text();
+        var count = linkers.split(' ')[0]++ - 1;
+        $('#linkers').html(count + " linkers");
+        $('#member${session.username}').parent().remove();
+    };
+</script>
+#{/set}
+<style>
+    .big-number {
+        font-size: 18px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="row text-center">
+    <div class="row">
+        <h2 style="font-size: 40px; line-height: 44px;" itemprop="name">
+        #{if member.ticketingRegistered}<i class="icon-check" style="color: green"></i> #{/if}
+        ${member}
+        </h2>
+    </div>
+#{if member instanceof models.Sponsor}
+    <img src="${member.logoUrl}" style="max-width: 120px; max-height: 120px" alt="Logo ${_arg}"/>
+#{/if}
+#{else}
+    #{if member.email}
+        <div class="img-thumbnail">#{gravatar.img member.email, size:100, default:'mm', rating:'pg', secure:true/}</div>
+    #{/if}
+#{/else}
+</div><br/>
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-1 text-center">
+    #{if member.badges}
+        <span class="big-number">${member.badges.size()}</span><br/>
+        <span>Badges</span>
+    #{/if}
+    </div>
+    <div class="col-md-1 text-center">
+        <span class="big-number">${member.getNbLooks()}</span><br/>
+        <span>Viewed</span>
+    </div>
+    <div class="col-md-1 text-center">
+    #{if member.links}
+        <span class="big-number">${member.links.size()}</span><br/>
+        <span>Following</span>
+    #{/if}
+    </div>
+    <div class="col-md-1 text-center">
+    #{if member.linkers}
+        <span class="big-number">${member.linkers.size()}</span><br/>
+        <span>Followers</span>
+    #{/if}
+    </div>
+    <div class="col-md-4"></div>
+</div><br/>
+
+<div class="row" style="text-align:center;">
+    <div style="display: inline-block;">
+        #{list items:member.getOrderedAccounts(), as:'account'}
+            <a class="service-button ${account.provider.name().toLowerCase()} active" id="account${account.provider}"
+               href="${account.url()}" target="_blank" rel="twipsy" title="&{'provider.'+account.provider.name()}"></a>
+        #{/list}
+        #{if member.sharedLinks}
+            #{list items:member.sharedLinks, as:'link'}
+                <a class="sharedLink" href="${link.URL}" rel="twipsy" title="${link.name}" target="_blank"><img
+                        src="https://getfavicon.appspot.com/${link.URL.urlEncode()}"/></a>
+            #{/list}
+        #{/if}
+    </div>
+</div>
+<br/>
+<div class="row text-center" itemprop="description" style="font-size: 18px; font-weight: 200;">
+#{markdown member.shortDescription /}
+</div>
+<br/>
+
+<div class="row text-center">
+#{if session.get("username") != null && !session.get("username").equals(member.login)}
+    <a id="link"
+       #{if member.hasForLinker(session.get("username"))}style="display:none"#{/if} class="btn btn-primary"
+       onclick="link()" rel="popover" data-content="&{'button.link.note'}"
+       data-original-title="&{'button.link.title'}" data-html="true">Link</a>
+    <a id="unlink"
+       #{if !member.hasForLinker(session.get("username"))}style="display:none"#{/if} class="btn btn-primary"
+       onclick="unlink()">Unlink</a>
+#{/if}
+</div>
+
+
+#{if member.getValidatedTalks()}
+<div>
+    <h2>Mes talks</h2>
+    #{list items:member.getValidatedTalks(), as:'talk'}
+        <div>#{session-small talk /}</div>
+    #{/list}
+</div><br/>
+#{/if}
+
+
+#{if member.longDescription}
+<div id="longDescription">
+    <h2>My biography</h2>
+    #{markdown member.longDescription /}
+</div><br/>
+#{/if}
+
+#{if member.getLightningTalks()}
+<div>
+    <h2>Mes lightning talks</h2>
+    #{list items:member.getLightningTalks(), as:'lt'}
+        <div>#{session-small lt /}</div>
+    #{/list}
+</div><br/>
+#{/if}
+
+%{
+    def previousTalks = member.getPreviousValidatedTalks();
+}%
+#{if previousTalks.size()}
+<div>
+    <h2>My previous talks at Mix-IT</h2>
+    #{list items:previousTalks.keySet(), as:'previousEvent'}
+    <div class="row">
+        <div class="col-md-2">
+            <h3>à &{'event.'+previousEvent}</h3>
+        </div>
+        <div class="col-md-10">
+            #{list items:member.getPreviousValidatedTalks().get(previousEvent), as:'talk'}
+                <div>#{session-small talk /}</div>
+            #{/list}
+        </div>
+    </div>
+    #{/list}
+
+</div><br/>
+#{/if}
+
+#{if member.interests}
+<div>
+    <h2>My interests</h2>
+    #{list items:member.interests, as:'interest'}
+        <a href="@{Application.searchByInterest(interest.name)}"><span
+                class="">${interest}</span></a>
+    #{/list}
+</div><br/>
+#{/if}
+
+<div>
+    <h2>My social activities</h2>
+#{list items:member.getAccountProviders(), as:'provider'}
+    <a class="service-button ${provider.name().toLowerCase()}" id="${provider}"
+       onClick="handleProvider('${provider}')" rel='twipsy'
+       title="Cliquer pour filtrer le flux &{'provider.'+provider}"></a>
+#{/list}
+    <br/><br/>
+
+    <p id="activities" style="max-height: 200px"></p>
+    <a id="moreActivities" class="btn small" onclick="loadMoreActivities(true)">&{'activities.more'}</a>
+    <img id="activitiesSpinner" class="spinner" src="/public/images/spinner.gif" alt="chargement..."/>
+    <script type="text/javascript">
+        var providers = ['${member.getAccountProviders().join("','")}'];
+        var page = 1;
+        var size = 5;
+        var activitiesAction = #{jsAction @Activities.of(':login', ':providers', ':page',':size') /};
+        var spinner = $('#activitiesSpinner');
+        var btnMoreActivities = $('#moreActivities');
+        function loadMoreActivities(autoscroll) {
+            if (providers.length > 0) {
+                btnMoreActivities.addClass('disabled');
+                spinner.css("visibility", "visible");
+                $.get(activitiesAction({login: '${member.login}', providers: providers.join("${controllers.Activities.PROVIDERS_SEP}"), page: page, size: size}), function(data) {
+                    $('#activities').append(data);
+                    if (data) {
+                        btnMoreActivities.css('visibility', 'visible');
+                        page++;
+                    } else {
+                        btnMoreActivities.css('visibility', 'hidden');
+                    }
+                    spinner.css("visibility", "hidden");
+                    btnMoreActivities.removeClass('disabled');
+                    if (autoscroll) {
+                        $("#activities").animate({ scrollTop: $("#activities").attr("scrollHeight") - $('#activities').height() }, 1000);
+                    }
+                });
+            }
+        }
+
+        function handleProvider(provider) {
+            var contain = providers.indexOf(provider);
+            if (contain != -1) {
+                providers = providers.filter(function(x) {
+                    return x != provider
+                })
+                $('#' + provider).removeClass(provider.toLowerCase()).addClass(provider.toLowerCase() + '-off');
+            } else {
+                providers.push(provider);
+                $('#' + provider).removeClass(provider.toLowerCase() + '-off').addClass(provider.toLowerCase());
+            }
+            $('#activities').empty();
+            page = 1;
+            size = 5;
+            loadMoreActivities(false);
+        }
+        // Initial loading : first page
+        loadMoreActivities(true);
+    </script>
+</div><br/>
+
+#{if favorites}
+<div>
+    <h2>Mes sessions favorites</h2>
+    #{list items:favorites, as:'favorite'}
+        <div>#{session-small favorite /}</div>
+    #{/list}
+</div><br/>
+#{/if}
+
+#{secure.check models.Role.ADMIN_SESSION}
+<br/><br/>
+
+<div class="row">
+    <div class="alert alert-info">
+        <h4>Staff</h4>
+
+        <p>
+            Email : ${member.email}
+        </p>
+    </div>
+</div>
+#{/secure.check}
