@@ -1,0 +1,342 @@
+#{extends 'main.html' /}
+#{set title:'Edit my profile' /}
+#{set 'moreScripts'}
+<!-- Requirements for managing form dirtiness
+<script src="@{'/public/javascripts/modal.js'}"></script>
+<script src="@{'/public/javascripts/jquery.dirtyforms.js'}"></script>
+<script src="@{'/public/javascripts/dirtiness.js'}"></script>-->
+<!-- End Requirements for managing form dirtiness -->
+<script src="@{'/public/javascripts/limitcountdown.js'}"></script>
+<script lang="text/javascript">
+    var nbLinks = 5;
+    function inputName(i) {
+        return $('#sharedLinks' + i + '_name');
+    }
+    function inputUrl(i) {
+        return $('#sharedLinks' + i + '_URL');
+    }
+    function setSharedLink(i, name, url) {
+        inputName(i).val('');
+        inputUrl(i).val('');
+    }
+    function setSharedLink(i, values) {
+        inputName(i).val(values.name);
+        inputUrl(i).val(values.url);
+    }
+    function getSharedLink(i) {
+        var name = inputName(i).val();
+        var url = inputUrl(i).val();
+        return {name: name, url: url};
+    }
+    function deleteSharedLink(i) {
+        setSharedLink(i, '', '');
+    }
+    function moveUpSharedLink(i) {
+        if (i > 0) {
+            var valuesPrevious = getSharedLink(i - 1);
+            var valuesCurrent = getSharedLink(i);
+            setSharedLink(i, valuesPrevious);
+            setSharedLink(i - 1, valuesCurrent);
+        }
+    }
+    function moveDownSharedLink(i) {
+        if (i < nbLinks - 1) {
+            var valuesNext = getSharedLink(i + 1);
+            var valuesCurrent = getSharedLink(i);
+            setSharedLink(i, valuesNext);
+            setSharedLink(i + 1, valuesCurrent);
+        }
+    }
+
+    $(function() {
+        registerLimited('#shortDescription', '#shortDescriptionCountdown', 140, "&{'remainingChars'}");
+    });
+</script>
+#{/set}
+
+<div class="page-header">
+    <h1>${registrationProvider ? 'Create' : 'Edit'} your profile</h1>
+</div>
+
+#{if registrationProvider}
+<div class="alert alert-warning">
+    Create a new profil after your connection via &{'provider.'+registrationProvider}.
+</div>
+#{/if}
+
+<div>
+    <h2>Information</h2>
+
+    <p>Enter your data</p>
+    <h4>You picture:</h4>
+
+    <p>Pictures are managed by <a class="ignoredirty" href="http://www.gravatar.com" target="_blank">Gravatar</a>.
+        We display the picture related to the email you enter below.
+        Connect to the <a class="ignoredirty" href="http://www.gravatar.com" target="_blank">Gravatar website</a>
+        to create or modify your picture.</p>
+</div>
+
+#{form @Profile.save(member.id, originalLogin)}
+
+<fieldset>
+    <legend>Profil</legend>
+    #{field 'login'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <input class="form-control" id="${field.id}" name="${field.name}" size="10" type="text"
+                       value="${member.login}"/>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+".note"}</span>
+            </div>
+        </div>
+    #{/}
+
+    #{field 'lastname'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <input class="form-control" id="${field.id}" name="${field.name}" size="30" type="text"
+                       x-autocompletetype="surname" value="${member?.lastname}"/>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+".note"}</span>
+            </div>
+        </div>
+    #{/}
+
+    #{field 'firstname'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <input class="form-control" id="${field.id}" name="${field.name}" size="30" type="text"
+                       x-autocompletetype="given-name" value="${member?.firstname}"/>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+".note"}</span>
+            </div>
+        </div>
+        <!-- /clearfix -->
+    #{/}
+
+    #{field 'company'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <input class="form-control" id="${field.id}" name="${field.name}" size="30" type="text"
+                       x-autocompletetype="organization" value="${member?.company}"/>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+".note"}</span>
+            </div>
+        </div>
+        <!-- /clearfix -->
+    #{/}
+
+    #{field 'email'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <input class="form-control" id="${field.id}" name="${field.name}" size="30" type="email"
+                       x-autocompletetype="email" value="${member?.email}"/>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+".note"}</span>
+            </div>
+        </div>
+        <!-- /clearfix -->
+    #{/}
+
+    #{field 'shortDescription'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <textarea class="form-control" id="${field.id}" name="${field.name}" size="30" maxlength="140"
+                          rows="2">${member?.shortDescription}</textarea>
+                <span class="help-inline" id="${field.id}Countdown" style="font-weight: bold"></span>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+'.note'}</span>
+            </div>
+        </div>
+        <!-- /clearfix -->
+    #{/}
+
+    #{field 'longDescription'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <textarea class="form-control" id="${field.id}" name="${field.name}" size="30"
+                          rows="4">${member?.longDescription}</textarea>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+'.note'}</span>
+            </div>
+        </div>
+        <!-- /clearfix -->
+    #{/}
+</fieldset>
+<hr/>
+<div>
+    <h2>Social Networks</h2>
+
+    <p>Your social network accounts.</p>
+
+    <p>Only the public data from these account will be <strong>automatically collected</strong> et
+        <strong>displayed</strong>.</p>
+</div>
+<fieldset>
+    <legend>You accounts</legend>
+
+    #{field 'twitterName'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <input class="form-control" id="${field.id}" name="${field.name}" size="30" type="text"
+                       value="${member?.getAccount(models.ProviderType.Twitter)?.screenName}"/>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+".note"}</span>
+            </div>
+        </div>
+        <!-- /clearfix -->
+    #{/}
+
+    #{field 'googlePlusId'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <input class="form-control" id="${field.id}" name="${field.name}" size="30" type="text"
+                       value="${member?.getAccount(models.ProviderType.Google)?.googleId}"/>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+".note"}</span>
+            </div>
+
+        </div>
+        <!-- /clearfix -->
+    #{/}
+
+</fieldset>
+
+<hr/>
+<h2>Vos liens</h2>
+
+<p>Links to be displayed on your profil</p>
+<fieldset>
+    <legend>Your links</legend>
+
+    #{list items:0..4, as:'i'}
+        #{field 'sharedLinks['+i+']'}
+            <div class="clearfix ${field.error?'error':''}">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4 ">
+                            <input class="form-control" id="sharedLinks${i}_name" name="${field.name}.name"
+                                   placeholder="Nom du lien" type="text" maxlength="25"
+                                   value="${member.sharedLinks[i]?.name}"/>
+                        </div>
+                        <div class="col-md-4 ">
+                            <input class="form-control" id="sharedLinks${i}_URL" name="${field.name}.URL"
+                                   placeholder="URL du lien" type="text" value="${member.sharedLinks[i]?.URL}"/>
+                        </div>
+                        <div class="col-md-4 ">
+                            <a class="ignoredirty" rel='twipsy' title="Déplacer ce lien vers le haut"
+                               onclick="moveUpSharedLink(${i})"><img class="action ignoredirty"
+                                                                     src="@{'/public/images/icons/moveup.png'}"
+                                                                     alt="Déplacer vers le haut"
+                                                                     style="vertical-align: bottom"/></a>
+                            <a class="ignoredirty" rel='twipsy' title="Déplacer ce lien vers le bas"
+                               onclick="moveDownSharedLink(${i})"><img class="action ignoredirty"
+                                                                       src="@{'/public/images/icons/movedown.png'}"
+                                                                       alt="Déplacer vers le bas"
+                                                                       style="vertical-align: bottom"/></a>
+                            <a class="ignoredirty" rel='twipsy' title="Supprimer ce lien"
+                               onclick="deleteSharedLink(${i})"><img class="action ignoredirty"
+                                                                     src="@{'/public/images/icons/remove.png'}"
+                                                                     alt="Supprimer"
+                                                                     style="vertical-align: bottom"/></a>
+                            <span class="help-block">#{error 'sharedLinks['+i+'].name' /}</span>
+                            <span class="help-block">#{error 'sharedLinks['+i+'].URL' /}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /clearfix -->
+        #{/}
+    #{/list}
+</fieldset>
+<hr/>
+<h2>Suscription</h2>
+<fieldset>
+    <legend>Buy you ticket</legend>
+    <div class="clearfix">
+        <div class="form-group">
+            #{ticketing member/}
+            <br/>
+            <span class="help-block">&{'registration.warning.email'}</span>
+        </div>
+    </div>
+
+</fieldset>
+<hr/>
+<h2>Your interests</h2>
+
+<p>The subjects you would like to learn, improve at Mix-IT.</p>
+<fieldset>
+    <legend>Interests</legend>
+
+    #{field 'interests'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+
+                <ul class="inputs-list">
+                    #{list items:models.Interest.findAllOrdered(), as:'interest'}
+                        <span class="checkbox">
+                                <li><label><input type="checkbox" name="${field.name}"
+                                                  value="${interest.name}" ${member?.interests.contains(interest)?'checked':''} />
+                                    <span>${interest}</span></label></li>
+                            </span>
+
+                    #{/list}
+                </ul>
+                <span class="help-block newline">${field.error}</span>
+                <span class="help-block newline">&{field.name+".note"}</span>
+            </div>
+
+        </div>
+        <!-- /clearfix -->
+
+    #{/}
+
+    #{field 'newInterests'}
+        <div class="clearfix ${field.error?'error':''}">
+
+            <div class="form-group">
+                <label for="${field.name}">&{field.name}</label>
+                <input class="form-control" id="${field.id}" name="${field.name}" size="200" type="text"
+                       value="${newInterests}"/>
+                <span class="help-block">${field.error}</span>
+                <span class="help-block">&{field.name+".note"}</span>
+            </div>
+        </div>
+        <!-- /clearfix -->
+    #{/}
+</fieldset>
+<div class="actions">
+    <input type="submit" class="btn btn-primary" value="Register"/>
+    #{if member.id} *{création de profil si member.id == null}*
+        <a href="@{Profile.show(originalLogin)}" class="btn btn-default">Cancel</a>
+        <a href="@{Profile.delete()}" class="btn btn-danger">Delete my account</a>
+    #{/if}
+    #{else}
+        <a href="@{Application.index()}" class="btn btn-default">Cancel</a>
+    #{/else}
+</div>
+
+#{/form}
+
+#{dirtyDialog /}
