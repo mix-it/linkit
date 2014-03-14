@@ -12,7 +12,7 @@
     .sponsor {
         text-align: center;
         padding: 20px;
-        margin: 10px;
+        //margin: 10px;
     }
 
     .sponsor hr {
@@ -24,15 +24,15 @@
     }
 
     .sponsor.col-sm-6 {
-        width: 300px;
+       // width: 300px;
     }
 
     .sponsor.col-sm-4 {
-        width: 180px;
+        //width: 180px;
     }
 
     .sponsor.col-sm-3 {
-        width: 130px;
+        //width: 130px;
     }
 </style>
 
@@ -78,7 +78,7 @@ def spanPerLevel = [
 
 #{list items:models.Sponsor.Level.values(), as:'level'}
     #{if eventSponsors.get(level)}
-        <h2>${level.toString().toLowerCase().capFirst()}</h2>
+        <h2 class="centeredWithLine"><span>${level.toString().toLowerCase().capFirst()}</span></h2>
 
         <div class="row">
         #{list eventSponsors.get(level), as:'sponsor'}
