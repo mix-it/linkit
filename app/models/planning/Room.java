@@ -6,7 +6,11 @@ public enum Room {
     S2("Eich"),
     S3("Nonaka"),
     S4("Dijkstra"),
-    S5("Turing");
+    S5("Turing"),
+    S6("Lovelace"),
+    Amphi1("Grand Amphi"),
+    Amphi2("Petit Amphi"),
+    Mezzanine("Mezzanine");
 
     private String name;
 
