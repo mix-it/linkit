@@ -37,6 +37,7 @@ indexes = {
                 query = "select distinct(m), max(a.at) "
                         + "from Activity a "
                         + "right outer join a.member m "
+                        + "where m.ticketingRegistered = :onlyRegistered "
                         + "group by m "
                         + "order by max(a.at) desc")
 })
@@ -237,13 +238,23 @@ public abstract class Activity extends Model implements Comparable<Activity> {
     }
     
     public static OrderedMembersDTO findOrderedMembers() {
+        return getOrderedMembersDTO(false);
+    }
+
+    private static OrderedMembersDTO getOrderedMembersDTO(boolean onlyRegistered) {
         OrderedMembersDTO members = new OrderedMembersDTO();
 
-        List<Object[]> resultset = (List) em().createNamedQuery(QUERY_ORDEREDMEMBERS).getResultList();
+        List<Object[]> resultset = (List) em().createNamedQuery(QUERY_ORDEREDMEMBERS)
+                .setParameter("onlyRegistered", onlyRegistered)
+                .getResultList();
         for (Object[] result : resultset) {
             members.add((Member) result[0], (Date) result[1]);
         }
         return members;
+    }
+
+    public static OrderedMembersDTO findOrderedRegisteredMembers() {
+        return getOrderedMembersDTO(true);
     }
 
     /**

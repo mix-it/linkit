@@ -65,6 +65,13 @@ public class Application extends PageController {
         render("Application/list.html", members, noneMessageKey);
     }
 
+    public static void registeredMembers() {
+        Activity.OrderedMembersDTO latestActivities = Activity.findOrderedRegisteredMembers();
+        List<Member> members = latestActivities.getMembers();
+        String noneMessageKey = "members.members.none";
+        render("Application/list.html", members, noneMessageKey);
+    }
+
     public static void staff() {
         List<Staff> members = Staff.findAll();
         Collections.shuffle(members);

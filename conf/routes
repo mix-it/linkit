@@ -50,6 +50,7 @@ GET     /staff                                  Application.staff
 GET     /sponsors                               Application.sponsors
 GET     /{event}/sponsors                       Application.sponsorsOf
 GET     /members                                Application.members
+GET     /registeredMembers                      Application.registeredMembers
 GET     /interest/{interest}                    Application.searchByInterest
 # I fucking don't know why this route is not used!
 GET     /search/{query}                         Application.search 

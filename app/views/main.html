@@ -89,10 +89,14 @@
                 <ul class="dropdown-menu">
                     <li #{if request.action=="Application.speakers"}class="active"#{/if}><a
                             href="@{Application.speakers()}">&{'menu.members.speakers'}</a></li>
-                #{if session.username}
-                    <li #{if request.controller=="Profile" || request.action=="Application.members"}class="active"#{/if}>
-                        <a href="@{Application.members()}">&{'menu.members.all'}</a></li>
-                #{/if}
+                    <li class="divider"></li>
+                    #{if session.username}
+                        <li #{if request.controller=="Profile" || request.action=="Application.members"}class="active"#{/if}>
+                            <a href="@{Application.members()}">&{'menu.members.all'}</a></li>
+                        <li #{if request.action=="Application.registeredMembers"}class="active"#{/if}>
+                            <a href="@{Application.registeredMembers()}">&{'menu.members.registeredMembers'}</a></li>
+                        <li class="divider"></li>
+                    #{/if}
                     <li #{if request.action=="Application.staff"}class="active"#{/if}><a
                             href="@{Application.staff()}">&{'menu.members.staff'}</a></li>
                     <li #{if request.action=="Application.sponsors"}class="active"#{/if}><a
