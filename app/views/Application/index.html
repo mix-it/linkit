@@ -49,8 +49,8 @@
                 location.reload();
             }
         };
-        //countdown();
-        //window.setInterval(countdown, 1000);
+        countdown();
+        window.setInterval(countdown, 1000);
         #{/if}
     });
 </script>
@@ -146,7 +146,7 @@
     <div id="date" class="row headers">
         <h2><span itemprop="startDate">&{'event.'+models.ConferenceEvent.CURRENT+'.date'}</span>. <span itemprop="location">Lyon,&nbsp;France</span>.</h2>
 
-       *{ #{if !ticketSales && !soldOut}
+        #{if !ticketSales && !soldOut}
             <div class="row">
                 <div class="col-sm-offset-1 col-sm-10" style="padding-top: 0px; color: grey;">
                     <div class="well text-center ">
@@ -154,7 +154,7 @@
                     </div>
                 </div>
             </div>
-        #{/if} }*
+        #{/if}
 
         <div class="row" style="text-align: center">
             <div class="well col-sm-4 col-sm-offset-4">
