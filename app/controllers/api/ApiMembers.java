@@ -24,22 +24,22 @@ public class ApiMembers extends JsonpController {
 
     public static void speakers(boolean details) {
         List<Member> speakers = Talk.findAllSpeakersOn(ConferenceEvent.CURRENT);
-        renderJSON(speakers, details ? DETAILED_MEMBER_SERIALIZER : MEMBER_SERIALIZER);
+        renderJSON(Member.class, speakers, details ? DETAILED_MEMBER_SERIALIZER : MEMBER_SERIALIZER);
     }
 
     public static void sponsors(boolean details) {
         List<Sponsor> sponsors = Sponsor.findOn(ConferenceEvent.CURRENT);
-        renderJSON(sponsors, details ? DETAILED_SPONSOR_SERIALIZER : SPONSOR_SERIALIZER);
+        renderJSON(Sponsor.class, sponsors, details ? DETAILED_SPONSOR_SERIALIZER : SPONSOR_SERIALIZER);
     }
 
     public static void staff(boolean details) {
         List<Staff> staff = Staff.findAll();
-        renderJSON(staff, details ? DETAILED_STAFF_SERIALIZER : STAFF_SERIALIZER);
+        renderJSON(Staff.class, staff, details ? DETAILED_STAFF_SERIALIZER : STAFF_SERIALIZER);
     }
 
     public static void members(boolean details) {
         List<Member> members = Member.findAll();
-        renderJSON(members, details ? DETAILED_MEMBER_SERIALIZER : MEMBER_SERIALIZER);
+        renderJSON(Member.class, members, details ? DETAILED_MEMBER_SERIALIZER : MEMBER_SERIALIZER);
     }
 
     public static void member(long id, boolean details) {
@@ -54,7 +54,7 @@ public class ApiMembers extends JsonpController {
 
     private static void member(Member member, boolean details) {
         notFoundIfNull(member);
-        renderJSON(member, details ? DETAILED_MEMBER_SERIALIZER : MEMBER_SERIALIZER);
+        renderJSON(Member.class, member, details ? DETAILED_MEMBER_SERIALIZER : MEMBER_SERIALIZER);
     }
 
 
@@ -71,6 +71,6 @@ public class ApiMembers extends JsonpController {
     private static void favorites(Member member) {
         notFoundIfNull(member);
         List<Talk> favorites = Vote.findFavoriteTalksByMemberOn(member, ConferenceEvent.CURRENT);
-        renderJSON(favorites, TALK_SERIALIZER);
+        renderJSON(Talk.class, favorites, TALK_SERIALIZER);
     }
 }

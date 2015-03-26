@@ -22,6 +22,7 @@ public class PlanedSlotJsonSerializer extends SessionJsonSerializer implements J
             result.addProperty("end", slot.slot.getEndDateTime().toString());
             result.addProperty("room", slot.slot.getRoom().toString());
         }
+        
         return result;
     }
 }
