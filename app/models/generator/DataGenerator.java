@@ -21,11 +21,11 @@ import play.Logger;
  * @author Sryl <cyril.lacote@gmail.com>
  */
 public final class DataGenerator {
-    
+
     private static AtomicInteger nbMembers = new AtomicInteger(0);
     protected static Member createMember() {
         Member m = new Member("login"+nbMembers.getAndIncrement());
-        
+
         m.company = Dummy.randomString(30);
         m.email = Dummy.randomEmail();
         m.firstname = Dummy.randomName(20);
@@ -34,11 +34,11 @@ public final class DataGenerator {
         m.shortDescription = Dummy.randomText(140);
         m.nbConsults = Dummy.randomInt(9999);
         m.save();
-        
+
         // Accounts
         m.addAccount(new TwitterAccount(Dummy.randomScreenName()));
         m.addAccount(new GoogleAccount(Dummy.randomGoogleId()));
-        
+
         // Badges
         final int nbBadges = Dummy.randomInt(Badge.values().length);
         for (int i = 0; i < nbBadges; i++) {
@@ -57,27 +57,27 @@ public final class DataGenerator {
         for (int i = 0; i < nbNewInterests; i++) {
             m.addInterest(Dummy.randomString(20));
         }
-        
+
         // Shared links
         final int nbSharedLinks = Dummy.randomInt(5);
         for (int i = 0; i < nbSharedLinks; i++) {
             m.addSharedLink(new SharedLink(Dummy.randomString(25), Dummy.randomURL()));
         }
-       
+
         return m.save();
     }
-    
+
     public static Set<Member> createMembers(int nb) {
         Set<Member> members = new HashSet<Member>(nb);
         for (int i = 0; i < nb; i++) {
-                    
+
             Logger.info("Generating dummy member n°"+(i+1));
 
             members.add(createMember());
         }
         return members;
     }
-    
+
     public static void generateLinks(int averageLinksPerMember) {
         List<Member> members = Member.findAll();
         for (Member m : members) {
@@ -91,7 +91,7 @@ public final class DataGenerator {
             m.save();
         }
     }
-    
+
     public static void generateSessionComments(int averageCommentsPerMember) {
         List<Session> sessions = Session.findAll();
         if (!sessions.isEmpty()) {
@@ -109,7 +109,7 @@ public final class DataGenerator {
             }
         }
     }
-    
+
     public static void generateArticleComments(int averageCommentsPerMember) {
         List<Article> articles = Article.findAll();
         if (!articles.isEmpty()) {
@@ -128,3 +128,4 @@ public final class DataGenerator {
         }
     }
 }
+        
