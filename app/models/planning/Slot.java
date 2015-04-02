@@ -258,7 +258,7 @@ public enum Slot {
         this.room = room;
     }
 
-    private DateTimeZone TZ_PARIS = DateTimeZone.forID("Europe/Paris");
+    private static final DateTimeZone TZ_PARIS = DateTimeZone.forID("Europe/Paris");
 
     public LocalDate getDay() {
         return day;

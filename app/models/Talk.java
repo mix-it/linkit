@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import models.activity.Activity;
 import models.activity.CommentSessionActivity;
 import models.activity.NewTalkActivity;
+import models.api.dto.AbstractSessionDTO;
 import play.data.validation.Required;
 import play.modules.search.Indexed;
 import play.mvc.Router;
@@ -131,5 +132,10 @@ public class Talk extends Session {
     public void markAsNotGuest() {
         this.guest = false;
         save();
+    }
+
+    @Override
+    public AbstractSessionDTO accept(SessionToJsonVisitor visitor) {
+        return visitor.visit(this);
     }
 }

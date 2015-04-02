@@ -1,6 +1,7 @@
 package models;
 
 import helpers.JavaExtensions;
+import models.api.dto.AbstractSessionDTO;
 import play.modules.search.Indexed;
 import play.mvc.Router;
 
@@ -45,4 +46,9 @@ public class LightningTalk extends Session {
     public static List<LightningTalk> findLinkedWith(Interest interest) {
         return find("? in elements(interests)", interest).fetch();
    }
+
+    @Override
+    public AbstractSessionDTO accept(SessionToJsonVisitor visitor) {
+        return visitor.visit(this);
+    }
 }

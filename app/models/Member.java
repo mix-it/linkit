@@ -1,20 +1,17 @@
 package models;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import controllers.JobFetchUserTimeline;
 import controllers.JobMajUserRegisteredTicketing;
-import controllers.api.NoExposeExclusionStrategy;
 import helpers.JavaExtensions;
 import helpers.badge.BadgeComputationContext;
 import helpers.badge.BadgeComputer;
 import helpers.badge.BadgeComputerFactory;
 import helpers.ticketing.YurPlan;
 import models.activity.*;
+import models.api.dto.AbstractMemberDTO;
 import models.auth.AuthAccount;
-import models.auth.LinkItAccount;
-import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -23,7 +20,6 @@ import play.Logger;
 import play.data.validation.*;
 import play.db.jpa.Model;
 
-import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.util.*;
 import java.util.List;
@@ -86,7 +82,6 @@ public class Member extends Model implements Lookable, Comparable<Member> {
 
     @Required
     @Email
-    @NoExposeExclusionStrategy.NoExpose
     public String email;
 
     @Column(name = FIRSTNAME)
@@ -128,34 +123,28 @@ public class Member extends Model implements Lookable, Comparable<Member> {
      * Members he follows
      */
     @ManyToMany
-    @NoExposeExclusionStrategy.NoExpose
     public Set<Member> links = new HashSet<Member>();
     /**
      * Members who follow him : reverse-mapping of {@link Member#links}
      */
     @ManyToMany(mappedBy = "links")
-    @NoExposeExclusionStrategy.NoExpose
     public Set<Member> linkers = new HashSet<Member>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @MapKey(name="provider")
-    @NoExposeExclusionStrategy.NoExpose
     public Map<ProviderType,Account> accounts = new EnumMap<ProviderType, Account>(ProviderType.class);
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @NoExposeExclusionStrategy.NoExpose
     public Set<Interest> interests = new TreeSet<Interest>();
 
     @ElementCollection
     public Set<Badge> badges = EnumSet.noneOf(Badge.class);
 
     @ManyToMany(mappedBy="speakers")
-    @NoExposeExclusionStrategy.NoExpose
     public Set<Session> sessions = new HashSet<Session>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @OrderColumn(name = "ordernum")
-    @NoExposeExclusionStrategy.NoExpose
     @Valid
     public List<SharedLink> sharedLinks = new LinkedList<SharedLink>();
 
@@ -657,5 +646,9 @@ public class Member extends Model implements Lookable, Comparable<Member> {
 
     public boolean canSeePrivateCommentsOf(Talk talk) {
         return talk.hasSpeaker(this);
+    }
+
+    public AbstractMemberDTO accept(MemberToJsonVisitor visitor) {
+        return visitor.visit(this);
     }
 }

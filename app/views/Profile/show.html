@@ -258,7 +258,7 @@
         <h4>Staff</h4>
 
         <p>
-            Email : ${member.email}<br/>
+            Email : ${member.email} (connects with: ${member.accounts})<br/>
 
             #{a @admin.MembersAdmin.show(member.id), class:'btn btn-primary'}Edit Member in CRUD#{/a}
             #{if member instanceof models.Sponsor}

@@ -161,6 +161,7 @@
                 #{if isValidatedSpeaker}
                     <a href="@{Profile.editSpeakerPreferences()}" class="btn btn-lg btn-danger btn-block">&{'speakerPreferences.not-set'}</a>
                 #{/if}
+                <a href="@{Sessions.currentPlanning}" class="btn btn-lg btn-primary btn-block">&{'home.planning'}</a>
                 #{if java.lang.Boolean.valueOf(play.configuration.getProperty('cfp.isOpen', 'false')) }
                     <a href="@{Sessions.create(session.username)}" class="btn btn-lg btn-primary btn-block">&{'menu.agenda.submit'}</a>
                 #{/if}

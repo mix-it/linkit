@@ -1,45 +1,107 @@
 package controllers.api;
 
-import com.google.gson.JsonSerializer;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
-import models.ConferenceEvent;
-import models.Member;
-import models.Sponsor;
-import models.Staff;
-import models.Talk;
-import models.Vote;
+import models.*;
+import models.api.dto.*;
 
 public class ApiMembers extends JsonpController {
 
-    private static JsonSerializer DETAILED_SPONSOR_SERIALIZER = new SponsorJsonSerializer(true);
-    private static JsonSerializer DETAILED_STAFF_SERIALIZER = new StaffJsonSerializer(true);
-    private static JsonSerializer DETAILED_MEMBER_SERIALIZER = new MemberJsonSerializer(true);
-    private static JsonSerializer SPONSOR_SERIALIZER = new SponsorJsonSerializer(false);
-    private static JsonSerializer STAFF_SERIALIZER = new StaffJsonSerializer(false);
-    private static JsonSerializer MEMBER_SERIALIZER = new MemberJsonSerializer(false);
-    private static JsonSerializer TALK_SERIALIZER = new TalkJsonSerializer(true);
+    private static final MemberToJsonVisitor SIMPLE_MEMBER_VISITOR = new AbstractMemberToDTOVisitor() {
+
+        @Override
+        public AbstractMemberDTO visit(Member member) {
+            MemberSimpleDTO dto = new MemberSimpleDTO();
+            initSimpleMember(member, dto);
+            return dto;
+        }
+
+        @Override
+        public AbstractMemberDTO visit(Staff staff) {
+            MemberSimpleDTO dto = new MemberSimpleDTO();
+            initSimpleMember(staff, dto);
+            return dto;
+        }
+
+        @Override
+        public AbstractMemberDTO visit(Sponsor sponsor) {
+            SponsorSimpleDTO dto = new SponsorSimpleDTO();
+            initSimpleMember(sponsor, dto);
+
+            dto.setLevel(sponsor.level);
+            dto.setLogo(ApiUrl.getFullUrl(sponsor.logoUrl));
+            return dto;
+        }
+    };
+
+    private static final MemberToJsonVisitor DETAILED_MEMBER_VISITOR = new AbstractMemberToDTOVisitor() {
+
+        @Override
+        public AbstractMemberDTO visit(Member member) {
+            MemberDetailedDTO dto = new MemberDetailedDTO();
+            initDetailedMember(member, dto);
+            return dto;
+        }
+
+        @Override
+        public AbstractMemberDTO visit(Staff staff) {
+            MemberDetailedDTO dto = new MemberDetailedDTO();
+            initDetailedMember(staff, dto);
+            return dto;
+        }
+
+        @Override
+        public AbstractMemberDTO visit(Sponsor sponsor) {
+            SponsorDetailedDTO dto = new SponsorDetailedDTO();
+            initDetailedMember(sponsor, dto);
+
+            dto.setLevel(sponsor.level);
+            dto.setLogo(ApiUrl.getFullUrl(sponsor.logoUrl));
+            return dto;
+        }
+    };
+
+    private static Function<Member, AbstractMemberDTO> toMemberDTO(boolean details) {
+        final MemberToJsonVisitor visitor = details ? DETAILED_MEMBER_VISITOR : SIMPLE_MEMBER_VISITOR;
+        return new Function<Member, AbstractMemberDTO>() {
+            @Override
+            public AbstractMemberDTO apply(Member member) {
+                return member.accept(visitor);
+            }
+        };
+    }
+
+    private static AbstractMemberDTO toMemberDTO(Member member, boolean details) {
+        final MemberToJsonVisitor visitor = details ? DETAILED_MEMBER_VISITOR : SIMPLE_MEMBER_VISITOR;
+        return member.accept(visitor);
+    }
+
+    private static Iterable<AbstractMemberDTO> toMembersDTO(List<? extends Member> members, boolean details) {
+        return Lists.transform(members, toMemberDTO(details));
+    }
 
 
     public static void speakers(boolean details) {
         List<Member> speakers = Talk.findAllSpeakersOn(ConferenceEvent.CURRENT);
-        renderJSON(Member.class, speakers, details ? DETAILED_MEMBER_SERIALIZER : MEMBER_SERIALIZER);
+        renderJSON(toMembersDTO(speakers, details));
     }
 
     public static void sponsors(boolean details) {
         List<Sponsor> sponsors = Sponsor.findOn(ConferenceEvent.CURRENT);
-        renderJSON(Sponsor.class, sponsors, details ? DETAILED_SPONSOR_SERIALIZER : SPONSOR_SERIALIZER);
+        renderJSON(toMembersDTO(sponsors, details));
     }
 
     public static void staff(boolean details) {
         List<Staff> staff = Staff.findAll();
-        renderJSON(Staff.class, staff, details ? DETAILED_STAFF_SERIALIZER : STAFF_SERIALIZER);
+        renderJSON(toMembersDTO(staff, details));
     }
 
     public static void members(boolean details) {
         List<Member> members = Member.findAll();
-        renderJSON(Member.class, members, details ? DETAILED_MEMBER_SERIALIZER : MEMBER_SERIALIZER);
+        renderJSON(toMembersDTO(members, details));
     }
 
     public static void member(long id, boolean details) {
@@ -54,9 +116,8 @@ public class ApiMembers extends JsonpController {
 
     private static void member(Member member, boolean details) {
         notFoundIfNull(member);
-        renderJSON(Member.class, member, details ? DETAILED_MEMBER_SERIALIZER : MEMBER_SERIALIZER);
+        renderJSON(toMemberDTO(member, details));
     }
-
 
     public static void favorites(long memberId) {
         Member member = Member.findById(memberId);
@@ -71,6 +132,7 @@ public class ApiMembers extends JsonpController {
     private static void favorites(Member member) {
         notFoundIfNull(member);
         List<Talk> favorites = Vote.findFavoriteTalksByMemberOn(member, ConferenceEvent.CURRENT);
-        renderJSON(Talk.class, favorites, TALK_SERIALIZER);
+
+        renderJSON(ApiSessions.toSessionsDTO(favorites, false));
     }
 }

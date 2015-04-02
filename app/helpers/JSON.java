@@ -4,6 +4,7 @@ import com.google.gson.*;
 import play.db.jpa.Model;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * JSON tools
@@ -54,4 +55,14 @@ public class JSON {
         }
         return array;
     }
+
+    /**
+     * @param set any set
+     * @param <O> any Object
+     * @return null if set is empty, otherwise <code>set</code>
+     */
+    public static <O> Set<O> nullify(Set<O> set) {
+        return set.isEmpty() ? null : set;
+    }
+
 }

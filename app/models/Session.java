@@ -2,6 +2,7 @@ package models;
 
 import com.google.common.base.Function;
 
+import models.planning.VisitedToJson;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 
@@ -29,7 +30,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import controllers.Mails;
-import controllers.api.NoExposeExclusionStrategy;
 import models.activity.Activity;
 import models.activity.CommentSessionActivity;
 import models.activity.LookSessionActivity;
@@ -47,7 +47,7 @@ import play.modules.search.Field;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Session extends Model implements Lookable, Comparable<Session> {
+public abstract class Session extends Model implements Lookable, Comparable<Session>, VisitedToJson {
 
     public static final String EVENT = "event";
     public static final String TITLE = "title";
@@ -89,21 +89,17 @@ public abstract class Session extends Model implements Lookable, Comparable<Sess
 
     @ManyToMany
     @Required
-    @NoExposeExclusionStrategy.NoExpose
     public Set<Member> speakers = new HashSet<Member>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @NoExposeExclusionStrategy.NoExpose
     public Set<Interest> interests = new TreeSet<Interest>();
 
     /** Eventual comments */
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
     @OrderBy("postedAt ASC")
-    @NoExposeExclusionStrategy.NoExpose
     public List<SessionComment> comments = new ArrayList<SessionComment>();
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
-    @NoExposeExclusionStrategy.NoExpose
     public List<Vote> votes;
 
     /** Number of consultation */

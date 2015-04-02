@@ -1,7 +1,9 @@
 package models.planning;
 
 import models.ConferenceEvent;
+import models.SessionToJsonVisitor;
 import models.Talk;
+import models.api.dto.AbstractSessionDTO;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import play.data.validation.Required;
@@ -21,7 +23,7 @@ import java.util.Map;
         // Unique key : only one slot per session
         @UniqueConstraint(name = "PlanedSlot_UK2", columnNames = {"event", "talk_id"}),
 })
-public class PlanedSlot extends Model {
+public class PlanedSlot extends Model implements VisitedToJson {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -97,5 +99,9 @@ public class PlanedSlot extends Model {
                 .append(slot)
                 .append(talk)
                 .toHashCode();
+    }
+
+    public AbstractSessionDTO accept(SessionToJsonVisitor visitor) {
+        return visitor.visit(this);
     }
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 
 import com.google.common.collect.ImmutableList;
+import models.api.dto.AbstractMemberDTO;
 import play.modules.search.Indexed;
 
 /**
@@ -61,5 +62,10 @@ public class Staff extends Member {
 
     public boolean isMale() {
         return !FEMALE_STAFF_MEMBER_LOGINS.contains(this.login);
+    }
+
+    @Override
+    public AbstractMemberDTO accept(MemberToJsonVisitor visitor) {
+        return visitor.visit(this);
     }
 }

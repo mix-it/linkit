@@ -3,12 +3,11 @@ package controllers.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSerializer;
-
-import java.util.List;
-
 import play.mvc.Controller;
 import play.mvc.Util;
-import play.mvc.results.RenderJson;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * Add JSONP support : render callback function if "callback" parameter provided.
@@ -18,21 +17,35 @@ public class JsonpController extends Controller {
     public static final String CALLBACK_FORMAT = "%s(%s)";
 
     @Util
-    protected static <T> void renderJSON(Class<T> type, T o, JsonSerializer<T> adapter) {
+    protected static void renderJSON(String str) {
         String callback = getCallbackParameter();
         if (callback != null) {
-            throw new RenderJson(String.format(CALLBACK_FORMAT, callback, createGson(type, adapter).toJson(o)));
+            Controller.renderJSON(String.format(CALLBACK_FORMAT, callback, str));
+        } else {
+            Controller.renderJSON(str);
         }
-        throw new RenderJson(createGson(type, adapter).toJson(o));
     }
 
     @Util
-    protected static <T> void renderJSON(Class<T> type, List<T> o, JsonSerializer<T> adapter) {
+    protected static void renderJSON(Object o, JsonSerializer<?>... adapters) {
         String callback = getCallbackParameter();
+        String json = createGson(adapters).toJson(o);
         if (callback != null) {
-            throw new RenderJson(String.format(CALLBACK_FORMAT, callback, createGson(type, adapter).toJson(o)));
+            Controller.renderJSON(String.format(CALLBACK_FORMAT, callback, json));
+        } else {
+            Controller.renderJSON(json);
         }
-        throw new RenderJson(createGson(type, adapter).toJson(o));
+    }
+
+    @Util
+    protected static void renderJSON(Object o) {
+        String callback = getCallbackParameter();
+        String json = createGson().toJson(o);
+        if (callback != null) {
+            Controller.renderJSON(String.format(CALLBACK_FORMAT, callback, json));
+        } else {
+            Controller.renderJSON(json);
+        }
     }
 
     private static String getCallbackParameter() {
@@ -42,10 +55,23 @@ public class JsonpController extends Controller {
         return null;
     }
 
-    private static <T> Gson createGson(Class<?> myclass, JsonSerializer<T> adapter) {
+    private static Gson createGson(JsonSerializer<?>... adapters) {
         GsonBuilder gson = new GsonBuilder();
-        gson.addSerializationExclusionStrategy(new NoExposeExclusionStrategy()).create();
-        gson.registerTypeAdapter(myclass, adapter);
+        if (adapters != null) {
+            for (Object adapter : adapters) {
+                Type t = getMethod(adapter.getClass(), "serialize").getParameterTypes()[0];
+                gson.registerTypeAdapter(t, adapter);
+            }
+        }
         return gson.create();
+    }
+
+    static Method getMethod(Class<?> clazz, String name) {
+        for (Method m : clazz.getDeclaredMethods()) {
+            if (m.getName().equals(name)) {
+                return m;
+            }
+        }
+        return null;
     }
 }

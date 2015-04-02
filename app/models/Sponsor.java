@@ -1,5 +1,6 @@
 package models;
 
+import models.api.dto.AbstractMemberDTO;
 import org.apache.commons.lang.StringUtils;
 import play.data.validation.MinSize;
 import play.data.validation.Required;
@@ -69,5 +70,10 @@ public class Sponsor extends Member {
     @Override
     public String toString() {
         return this.lastname;
+    }
+
+    @Override
+    public AbstractMemberDTO accept(MemberToJsonVisitor visitor) {
+        return visitor.visit(this);
     }
 }

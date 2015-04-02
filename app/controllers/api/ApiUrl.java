@@ -5,7 +5,7 @@ import play.vfs.VirtualFile;
 
 import java.lang.Object;
 import java.lang.String;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 public class ApiUrl {
@@ -19,9 +19,7 @@ public class ApiUrl {
     }
 
     private static Map<String, Object> map(long id) {
-        Map<String, Object> params = new HashMap<String, Object>(1);
-        params.put("id", id);
-        return params;
+        return Collections.<String, Object>singletonMap("id", Long.valueOf(id));
     }
 
     public static String getFullUrl(final String path) {
