@@ -1,6 +1,3 @@
-User-agent: Slurp
-Disallow: /
-
 User-agent: *
-Allow: /
+Disallow: /
 Sitemap: /sitemap.xml
