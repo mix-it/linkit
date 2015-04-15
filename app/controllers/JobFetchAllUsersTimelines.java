@@ -16,7 +16,8 @@ import play.jobs.Job;
  * Asynchronous fetch of user timelines on external providers (Google+, Twitter)
  * @author Sryl <cyril.lacote@gmail.com>
  */
-@Every("1h")
+// FIXME Job disabled
+// @Every("1h")
 @NoTransaction
 public class JobFetchAllUsersTimelines extends Job {
 

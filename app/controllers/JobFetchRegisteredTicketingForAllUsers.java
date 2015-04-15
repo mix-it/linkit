@@ -16,7 +16,8 @@ import java.util.List;
  * Asynchronous fetch to check if member is registered at the ticketing partner
  * @author Agnes <agnes.crepet@gmail.com>
  */
-@Every("1d")
+// FIXME Job disabled
+// @Every("1d")
 @NoTransaction
 public class JobFetchRegisteredTicketingForAllUsers extends Job {
 
